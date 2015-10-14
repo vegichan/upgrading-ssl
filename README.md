@@ -1,4 +1,4 @@
-# upgrading-ssl
+# A small POC showing how to upgrade an existing socket to SSL
 
 ## running
 
