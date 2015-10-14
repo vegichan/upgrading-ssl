@@ -9,54 +9,59 @@ public class UpgradingEchoServer
     public static void main(String[] args) throws IOException
     {
         ServerSocket serverSocket = null;
+        SSLSocketFactory sslsocketfactory = (SSLSocketFactory) SSLSocketFactory.getDefault();
+
+        PrintWriter out = null;
+        BufferedReader in = null;
 
         try {
             serverSocket = new ServerSocket(9999);
-        }
-        catch (IOException e)
-        {
-            System.err.println("Could not listen on port: 9999.");
-            System.exit(1);
-        }
 
-        Socket clientSocket = null;
-        System.out.println ("Waiting for connection.....");
+            while (true) {
+                System.out.println ("Waiting for connection.....");
 
-        try {
-            clientSocket = serverSocket.accept();
-        }
-        catch (IOException e)
-        {
-            System.err.println("Accept failed.");
-            System.exit(1);
-        }
+                try {
+                    Socket clientSocket = serverSocket.accept();
 
-        System.out.println ("Connection successful");
-        System.out.println ("Waiting for input.....");
 
-        PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
-        BufferedReader in = new BufferedReader(new InputStreamReader( clientSocket.getInputStream()));
+                    System.out.println("Connection successful");
+                    System.out.println("Waiting for input.....");
 
-        String inputLine;
+                    out = new PrintWriter(clientSocket.getOutputStream(), true);
+                    in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
-        while ((inputLine = in.readLine()) != null)
-        {
-            if (inputLine.contains("UPGRADE")) {
-                SSLSocketFactory sslsocketfactory = (SSLSocketFactory) SSLSocketFactory.getDefault();
-                SSLSocket sslSocket = (SSLSocket) sslsocketfactory.createSocket(clientSocket, null,
-                        clientSocket.getPort(), false);
-                sslSocket.setUseClientMode(false);
-                clientSocket = sslSocket;
-                out = new PrintWriter(clientSocket.getOutputStream(), true);
-                in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-                inputLine = in.readLine();
+                    String inputLine;
+
+                    while ((inputLine = in.readLine()) != null) {
+                        if (inputLine.contains("UPGRADE")) {
+
+                            SSLSocket sslSocket = (SSLSocket) sslsocketfactory.createSocket(clientSocket, null,
+                                    clientSocket.getPort(), false);
+                            sslSocket.setUseClientMode(false);
+                            clientSocket = sslSocket;
+                            out = new PrintWriter(clientSocket.getOutputStream(), true);
+                            in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+                            inputLine = in.readLine();
+                        }
+                        out.println(inputLine);
+                    }
+                    clientSocket.close();
+                } catch (Exception e) {
+                    // empty
+                }
             }
-            out.println(inputLine);
+        }
+        finally {
+            if (out != null){
+                out.close();
+            }
+            if (in != null){
+                in.close();
+            }
+            if (serverSocket != null){
+                serverSocket.close();
+            }
         }
 
-        out.close();
-        in.close();
-        clientSocket.close();
-        serverSocket.close();
     }
 } 
