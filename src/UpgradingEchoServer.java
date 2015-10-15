@@ -8,27 +8,21 @@ public class UpgradingEchoServer
 {
     public static void main(String[] args) throws IOException
     {
-        ServerSocket serverSocket = null;
         SSLSocketFactory sslsocketfactory = (SSLSocketFactory) SSLSocketFactory.getDefault();
 
-        PrintWriter out = null;
-        BufferedReader in = null;
-
-        try {
-            serverSocket = new ServerSocket(9999);
+        try (ServerSocket serverSocket = new ServerSocket(9999)){
 
             while (true) {
                 System.out.println ("Waiting for connection.....");
 
-                try {
-                    Socket clientSocket = serverSocket.accept();
+                try (Socket clientSocket = serverSocket.accept()){
 
 
                     System.out.println("Connection successful");
                     System.out.println("Waiting for input.....");
 
-                    out = new PrintWriter(clientSocket.getOutputStream(), true);
-                    in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+                    PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+                    BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
                     String inputLine;
 
@@ -38,30 +32,18 @@ public class UpgradingEchoServer
                             SSLSocket sslSocket = (SSLSocket) sslsocketfactory.createSocket(clientSocket, null,
                                     clientSocket.getPort(), false);
                             sslSocket.setUseClientMode(false);
-                            clientSocket = sslSocket;
-                            out = new PrintWriter(clientSocket.getOutputStream(), true);
-                            in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+                            out = new PrintWriter(sslSocket.getOutputStream(), true);
+                            in = new BufferedReader(new InputStreamReader(sslSocket.getInputStream()));
                             inputLine = in.readLine();
                         }
                         out.println(inputLine);
                     }
-                    clientSocket.close();
-                } catch (Exception e) {
-                    // empty
+                } catch (IOException ex) {
+                    System.err.println(ex);
                 }
             }
         }
-        finally {
-            if (out != null){
-                out.close();
-            }
-            if (in != null){
-                in.close();
-            }
-            if (serverSocket != null){
-                serverSocket.close();
-            }
-        }
+
 
     }
 } 
