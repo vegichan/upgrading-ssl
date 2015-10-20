@@ -84,7 +84,7 @@ public class IntegrationClient {
             try (SSLSocket sslsocket = (SSLSocket) sslsocketfactory.createSocket(echoSocket,
                     null, echoSocket.getPort(), false)) {
 
-                sslsocket.setUseClientMode(false);
+                //sslsocket.setUseClientMode(false);
 
                 String[] supported = sslsocket.getSupportedCipherSuites();
                 String[] anonCipherSuitesSupported = new String[supported.length];
@@ -105,6 +105,8 @@ public class IntegrationClient {
                 sslsocket.setEnabledCipherSuites(newEnabled);
 
                 //out = new PrintWriter(sslsocket.getOutputStream(), true);
+
+                sslsocket.startHandshake();
 
                 String s = "<TLSRequest Username=\"User\" Password=\"secure\"/>";
 
