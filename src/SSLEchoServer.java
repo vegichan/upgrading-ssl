@@ -34,7 +34,7 @@ class SSLEchoServer
             String string = null;
             while ((string = bufferedreader.readLine()) != null)
             {
-                System.out.println(string);
+                System.out.println("Received " + string);
                 System.out.flush();
             }
         }
