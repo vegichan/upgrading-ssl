@@ -82,9 +82,9 @@ public class TLSCertGenerator {
 
     /*
         A glorified version of this:
-        keytool -genkey -alias myhostkey -keystore ks.p12 \
-        -storepass changeit -validity 365 -keyalg RSA -keysize 2048 \
-        -storetype PKCS12 -dname "CN=`uuidgen`, O=NuoDB, L=Cambridge, ST=Massechussets, C=US"
+        keytool -genkey -alias myhostkey -keystore outstore.p12 \
+        -storepass changeit -validity 365 -keyalg RSA -keysize 1024 \
+        -storetype PKCS12 -dname "CN=`uuidgen`, O=NuoDB, L=Cambridge, ST=Massachusetts, C=US"
 
      */
 
