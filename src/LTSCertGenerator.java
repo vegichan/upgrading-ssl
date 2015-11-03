@@ -18,7 +18,7 @@ public class LTSCertGenerator {
 
     public static final String keyAlias = "myhostkey";
     public static final String defaultPassword = "changeit";
-    z
+    
     static X509Certificate generateCertificate(String dn, KeyPair pair, int days, String algorithm)
             throws GeneralSecurityException, IOException
     {
