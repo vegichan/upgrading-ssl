@@ -11,14 +11,14 @@ import java.util.Date;
 import java.security.cert.Certificate;
 import java.util.UUID;
 
-public class LTSCertGenerator {
+public class TLSCertGenerator {
 
     public static final String outName = "outstore";
     public static final String outFolder = "certs";
 
     public static final String keyAlias = "myhostkey";
     public static final String defaultPassword = "changeit";
-    
+
     static X509Certificate generateCertificate(String dn, KeyPair pair, int days, String algorithm)
             throws GeneralSecurityException, IOException
     {
@@ -78,6 +78,15 @@ public class LTSCertGenerator {
     public static void writePEM(KeyPair keyPair) throws Exception {
         // java is too stupid to do this without Bouncy Castle
     }
+
+
+    /*
+        A glorified version of this:
+        keytool -genkey -alias myhostkey -keystore ks.p12 \
+        -storepass changeit -validity 365 -keyalg RSA -keysize 2048 \
+        -storetype PKCS12 -dname "CN=`uuidgen`, O=NuoDB, L=Cambridge, ST=Massechussets, C=US"
+
+     */
 
     public static void main(String[] args) throws Exception {
         KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
